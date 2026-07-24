@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>바이브 코딩 — 생각의 속도로 만드는 개발</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0b0e14;
+    --bg-soft: #11141d;
+    --panel: #161a24;
+    --line: rgba(228,228,240,0.09);
+    --text: #e4e4f0;
+    --text-dim: #9195a8;
+    --violet: #7c5cfc;
+    --cyan: #22d3ee;
+    --violet-soft: rgba(124,92,252,0.14);
+    --cyan-soft: rgba(34,211,238,0.14);
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  html{scroll-behavior:smooth;}
+
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important;}
+  }
+
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--font-body);
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+
+  a{color:inherit;text-decoration:none;}
+
+  ::selection{background:var(--violet-soft); color:#fff;}
+
+  .glow-bg{
+    position:fixed;
+    inset:0;
+    z-index:0;
+    pointer-events:none;
+    background:
+      radial-gradient(600px circle at 15% 20%, var(--violet-soft), transparent 60%),
+      radial-gradient(500px circle at 85% 60%, var(--cyan-soft), transparent 60%);
+    opacity:0.8;
+  }
+
+  .wrap{max-width:1100px; margin:0 auto; padding:0 24px; position:relative; z-index:1;}
+
+  /* NAV */
+  nav{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    backdrop-filter:blur(14px);
+    background:rgba(11,14,20,0.7);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{
+    max-width:1100px; margin:0 auto; padding:16px 24px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .logo{
+    font-family:var(--font-display); font-weight:700; font-size:19px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .logo-dot{
+    width:9px; height:9px; border-radius:50%;
+    background:linear-gradient(135deg,var(--violet),var(--cyan));
+    box-shadow:0 0 12px var(--violet);
+    animation:pulse-dot 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse-dot{
+    0%,100%{transform:scale(1); opacity:1;}
+    50%{transform:scale(1.4); opacity:0.7;}
+  }
+  .nav-links{display:flex; gap:32px; font-size:14px; color:var(--text-dim);}
+  .nav-links a{transition:color 0.2s;}
+  .nav-links a:hover{color:var(--text);}
+  .nav-cta{
+    font-size:14px; padding:9px 18px; border-radius:8px;
+    background:var(--text); color:var(--bg); font-weight:600;
+    transition:transform 0.2s, box-shadow 0.2s;
+  }
+  .nav-cta:hover{transform:translateY(-1px); box-shadow:0 6px 20px rgba(124,92,252,0.35);}
+  .nav-mobile-hide{display:flex;}
+  @media (max-width:760px){
+    .nav-mobile-hide{display:none;}
+  }
+
+  /* HERO */
+  header.hero{
+    min-height:100vh;
+    display:flex; align-items:center;
+    padding-top:120px; padding-bottom:80px;
+    position:relative;
+  }
+  .hero-grid{
+    display:grid; grid-template-columns:1.05fr 0.95fr; gap:56px; align-items:center;
+  }
+  @media (max-width:900px){
+    .hero-grid{grid-template-columns:1fr; gap:48px;}
+  }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:var(--font-mono); font-size:13px; color:var(--cyan);
+    background:rgba(34,211,238,0.08); border:1px solid rgba(34,211,238,0.22);
+    padding:6px 14px; border-radius:100px; margin-bottom:24px;
+  }
+  h1.headline{
+    font-family:var(--font-display); font-weight:700;
+    font-size:clamp(2.4rem, 5.2vw, 3.9rem);
+    line-height:1.12; letter-spacing:-0.02em;
+    margin-bottom:22px;
+  }
+  h1.headline .grad{
+    background:linear-gradient(120deg, var(--violet), var(--cyan));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .hero-sub{
+    font-size:17px; color:var(--text-dim); max-width:480px; margin-bottom:34px;
+  }
+  .hero-actions{display:flex; gap:14px; flex-wrap:wrap;}
+  .btn-primary{
+    padding:14px 26px; border-radius:10px; font-weight:600; font-size:15px;
+    background:linear-gradient(120deg, var(--violet), var(--cyan));
+    color:#08090d;
+    transition:transform 0.2s, box-shadow 0.2s;
+    display:inline-block;
+  }
+  .btn-primary:hover{transform:translateY(-2px); box-shadow:0 10px 30px rgba(124,92,252,0.4);}
+  .btn-ghost{
+    padding:14px 26px; border-radius:10px; font-weight:600; font-size:15px;
+    border:1px solid var(--line); color:var(--text);
+    transition:border-color 0.2s, background 0.2s;
+    display:inline-block;
+  }
+  .btn-ghost:hover{border-color:rgba(228,228,240,0.3); background:rgba(228,228,240,0.04);}
+
+  /* TERMINAL - signature element */
+  .terminal{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:14px;
+    overflow:hidden;
+    box-shadow:0 30px 80px -20px rgba(0,0,0,0.6), 0 0 0 1px rgba(124,92,252,0.06);
+    position:relative;
+  }
+  .terminal::before{
+    content:'';
+    position:absolute; inset:-1px;
+    border-radius:14px;
+    padding:1px;
+    background:linear-gradient(140deg, rgba(124,92,252,0.5), transparent 40%, rgba(34,211,238,0.4));
+    -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite:xor; mask-composite:exclude;
+    pointer-events:none;
+    opacity:0.7;
+  }
+  .terminal-bar{
+    display:flex; align-items:center; gap:8px;
+    padding:12px 16px; border-bottom:1px solid var(--line);
+    background:rgba(255,255,255,0.02);
+  }
+  .tdot{width:10px; height:10px; border-radius:50%;}
+  .tdot.r{background:#ff5f57;} .tdot.y{background:#febc2e;} .tdot.g{background:#28c840;}
+  .terminal-title{
+    margin-left:8px; font-family:var(--font-mono); font-size:12px; color:var(--text-dim);
+  }
+  .terminal-body{
+    padding:22px 20px; font-family:var(--font-mono); font-size:13.5px; min-height:230px;
+  }
+  .prompt-line{color:var(--text-dim); margin-bottom:14px;}
+  .prompt-line .arrow{color:var(--cyan); margin-right:8px;}
+  #typedPrompt{color:var(--text); border-right:2px solid var(--cyan);}
+  .code-out{
+    margin-top:18px; padding-top:16px; border-top:1px dashed var(--line);
+    opacity:0; transform:translateY(6px);
+    transition:opacity 0.6s ease, transform 0.6s ease;
+  }
+  .code-out.show{opacity:1; transform:translateY(0);}
+  .code-out .kw{color:var(--violet);}
+  .code-out .fn{color:var(--cyan);}
+  .code-out .str{color:#a5e07f;}
+  .code-out .cm{color:var(--text-dim);}
+  .code-out div{white-space:pre; line-height:1.7;}
+
+  /* SECTIONS common */
+  section{padding:110px 0; position:relative;}
+  .section-head{max-width:640px; margin-bottom:56px;}
+  .kicker{
+    font-family:var(--font-mono); font-size:13px; color:var(--violet);
+    text-transform:uppercase; letter-spacing:0.08em; margin-bottom:14px; display:block;
+  }
+  h2.section-title{
+    font-family:var(--font-display); font-weight:700;
+    font-size:clamp(1.8rem, 3.4vw, 2.6rem); letter-spacing:-0.01em; margin-bottom:16px;
+  }
+  .section-desc{color:var(--text-dim); font-size:16px; max-width:560px;}
+
+  .reveal{opacity:0; transform:translateY(24px); transition:opacity 0.7s ease, transform 0.7s ease;}
+  .reveal.visible{opacity:1; transform:translateY(0);}
+
+  /* WAVE DIVIDER */
+  .wave-divider{width:100%; height:70px; overflow:hidden; opacity:0.5;}
+  .wave-divider svg{width:100%; height:100%;}
+  .wave-path{
+    stroke:url(#waveGrad); stroke-width:1.5; fill:none;
+    stroke-dasharray:1400; stroke-dashoffset:1400;
+    animation:drawWave 3s ease forwards;
+  }
+  @keyframes drawWave{ to{stroke-dashoffset:0;} }
+
+  /* COMPARE */
+  .compare-grid{display:grid; grid-template-columns:1fr 1fr; gap:24px;}
+  @media (max-width:760px){.compare-grid{grid-template-columns:1fr;}}
+  .compare-card{
+    border:1px solid var(--line); border-radius:16px; padding:30px;
+    background:var(--bg-soft);
+  }
+  .compare-card.vibe{
+    border-color:rgba(124,92,252,0.35);
+    background:linear-gradient(180deg, rgba(124,92,252,0.06), transparent 60%), var(--bg-soft);
+  }
+  .compare-label{
+    font-family:var(--font-mono); font-size:12px; color:var(--text-dim);
+    text-transform:uppercase; letter-spacing:0.08em; margin-bottom:18px; display:block;
+  }
+  .compare-card.vibe .compare-label{color:var(--cyan);}
+  .compare-card h3{font-family:var(--font-display); font-size:22px; margin-bottom:18px;}
+  .compare-list{list-style:none;}
+  .compare-list li{
+    padding:10px 0; border-bottom:1px solid var(--line);
+    font-size:14.5px; color:var(--text-dim); display:flex; gap:10px;
+  }
+  .compare-list li:last-child{border-bottom:none;}
+  .compare-list li::before{content:'—'; color:var(--text-dim); flex-shrink:0;}
+  .compare-card.vibe .compare-list li::before{content:'↳'; color:var(--cyan);}
+  .compare-card.vibe .compare-list li{color:var(--text);}
+
+  /* PRINCIPLES */
+  .principle-flow{display:flex; flex-direction:column; gap:0;}
+  .principle-row{
+    display:grid; grid-template-columns:120px 1fr; gap:28px; align-items:start;
+    padding:30px 0; border-top:1px solid var(--line);
+  }
+  .principle-row:last-child{border-bottom:1px solid var(--line);}
+  @media (max-width:640px){
+    .principle-row{grid-template-columns:1fr; gap:8px;}
+  }
+  .principle-word{
+    font-family:var(--font-display); font-weight:600; font-size:15px;
+    color:var(--violet); letter-spacing:0.02em;
+  }
+  .principle-body h3{font-family:var(--font-display); font-size:20px; margin-bottom:8px;}
+  .principle-body p{color:var(--text-dim); font-size:15px; max-width:600px;}
+
+  /* WORKFLOW - actual sequence, numbering justified */
+  .workflow{position:relative; padding-left:2px;}
+  .workflow-line{
+    position:absolute; left:23px; top:12px; bottom:12px; width:1px;
+    background:linear-gradient(180deg, var(--violet), var(--cyan));
+    opacity:0.35;
+  }
+  .workflow-step{
+    display:grid; grid-template-columns:48px 1fr; gap:22px;
+    padding:26px 0; position:relative;
+  }
+  .workflow-num{
+    width:48px; height:48px; border-radius:50%;
+    border:1px solid var(--line); background:var(--panel);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-mono); font-size:14px; color:var(--cyan);
+    z-index:1;
+  }
+  .workflow-step h3{font-family:var(--font-display); font-size:18px; margin-bottom:6px;}
+  .workflow-step p{color:var(--text-dim); font-size:14.5px; max-width:560px;}
+
+  /* QUOTE */
+  .quote-panel{
+    border:1px solid var(--line); border-radius:18px; padding:56px;
+    background:linear-gradient(135deg, rgba(124,92,252,0.07), rgba(34,211,238,0.05));
+    text-align:center;
+  }
+  @media (max-width:640px){.quote-panel{padding:32px 22px;}}
+  .quote-panel blockquote{
+    font-family:var(--font-display); font-weight:500;
+    font-size:clamp(1.3rem, 2.6vw, 1.9rem); line-height:1.45; letter-spacing:-0.01em;
+    margin-bottom:22px;
+  }
+  .quote-attr{color:var(--text-dim); font-family:var(--font-mono); font-size:13.5px;}
+
+  /* CTA */
+  .cta-final{
+    text-align:center; padding-top:60px; padding-bottom:140px;
+  }
+  .cta-final h2{
+    font-family:var(--font-display); font-weight:700;
+    font-size:clamp(2rem, 4.4vw, 3.1rem); letter-spacing:-0.02em; margin-bottom:20px;
+  }
+  .cta-final p{color:var(--text-dim); margin-bottom:34px; font-size:16px;}
+
+  footer{
+    border-top:1px solid var(--line); padding:34px 0;
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;
+  }
+  footer .foot-links{display:flex; gap:22px; font-size:13.5px; color:var(--text-dim);}
+  footer .foot-links a:hover{color:var(--text);}
+  footer .foot-copy{font-size:13px; color:var(--text-dim);}
+</style>
+</head>
+<body>
+
+<div class="glow-bg"></div>
+
+<nav>
+  <div class="nav-inner">
+    <div class="logo"><span class="logo-dot"></span>바이브 코딩</div>
+    <div class="nav-links nav-mobile-hide">
+      <a href="#what">개념</a>
+      <a href="#compare">비교</a>
+      <a href="#principles">원칙</a>
+      <a href="#workflow">흐름</a>
+    </div>
+    <a href="#cta" class="nav-cta">시작하기</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">● 새로운 개발 문법</span>
+      <h1 class="headline">말하듯 설계하고,<br><span class="grad">흐르듯 코드</span>가 됩니다</h1>
+      <p class="hero-sub">바이브 코딩은 문법이 아니라 의도로 대화하는 개발 방식입니다. 원하는 것을 자연어로 설명하면, 그 흐름 그대로 동작하는 코드가 됩니다.</p>
+      <div class="hero-actions">
+        <a href="#cta" class="btn-primary">지금 시작하기</a>
+        <a href="#what" class="btn-ghost">개념 알아보기</a>
+      </div>
+    </div>
+
+    <div class="terminal">
+      <div class="terminal-bar">
+        <span class="tdot r"></span><span class="tdot y"></span><span class="tdot g"></span>
+        <span class="terminal-title">vibe — session.ai</span>
+      </div>
+      <div class="terminal-body">
+        <div class="prompt-line"><span class="arrow">›</span><span id="typedPrompt"></span></div>
+        <div class="code-out" id="codeOut">
+<div><span class="cm">// 사용자가 말한 의도가 그대로 구조가 됩니다</span></div>
+<div><span class="kw">function</span> <span class="fn">renderRecentOrders</span>(orders) {</div>
+<div>  <span class="kw">return</span> orders</div>
+<div>    .filter(o =&gt; o.status === <span class="str">'delivered'</span>)</div>
+<div>    .slice(0, 5)</div>
+<div>    .map(<span class="fn">toCard</span>);</div>
+<div>}</div>
+</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="wave-divider">
+    <svg viewBox="0 0 1100 70" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="waveGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#7c5cfc"/>
+          <stop offset="100%" stop-color="#22d3ee"/>
+        </linearGradient>
+      </defs>
+      <path class="wave-path" d="M0,35 C 150,10 250,60 400,35 C 550,10 650,60 800,35 C 900,15 1000,55 1100,35" />
+    </svg>
+  </div>
+</div>
+
+<section id="what">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="kicker">개념</span>
+      <h2 class="section-title">바이브 코딩이란 무엇인가요?</h2>
+      <p class="section-desc">문법을 먼저 배우는 대신, 만들고 싶은 것의 '느낌'과 '의도'를 먼저 정의합니다. AI가 그 의도를 코드로 옮기고, 개발자는 결과를 다듬으며 대화를 이어갑니다.</p>
+    </div>
+
+    <div class="compare-grid" style="margin-top:20px;">
+      <div class="reveal" style="border:1px solid var(--line); border-radius:16px; padding:30px; background:var(--bg-soft);">
+        <h3 style="font-family:var(--font-display); font-size:20px; margin-bottom:10px;">생각의 속도</h3>
+        <p style="color:var(--text-dim); font-size:14.5px;">문법과 씨름하는 시간을 줄이고, 아이디어가 떠오른 순간과 코드가 만들어지는 순간의 간극을 최소화합니다.</p>
+      </div>
+      <div class="reveal" style="border:1px solid var(--line); border-radius:16px; padding:30px; background:var(--bg-soft);">
+        <h3 style="font-family:var(--font-display); font-size:20px; margin-bottom:10px;">대화형 반복</h3>
+        <p style="color:var(--text-dim); font-size:14.5px;">한 번에 완성하지 않습니다. 결과를 보고, 방향을 다시 설명하고, 코드가 조금씩 의도에 맞춰집니다.</p>
+      </div>
+      <div class="reveal" style="border:1px solid var(--line); border-radius:16px; padding:30px; background:var(--bg-soft);">
+        <h3 style="font-family:var(--font-display); font-size:20px; margin-bottom:10px;">낮아진 진입장벽</h3>
+        <p style="color:var(--text-dim); font-size:14.5px;">아이디어가 있는 사람이라면 누구나 프로토타입을 만들 수 있습니다. 도구가 문법의 빈틈을 채워줍니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="compare">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="kicker">비교</span>
+      <h2 class="section-title">기존 코딩과 무엇이 다른가요</h2>
+      <p class="section-desc">문법 중심의 사고에서 의도 중심의 사고로 무게 중심이 옮겨갑니다.</p>
+    </div>
+
+    <div class="compare-grid">
+      <div class="compare-card reveal">
+        <span class="compare-label">기존 방식</span>
+        <h3>문법에서 시작</h3>
+        <ul class="compare-list">
+          <li>API와 문법을 먼저 찾아본다</li>
+          <li>구현 순서를 손으로 하나씩 작성한다</li>
+          <li>막히면 검색과 문서를 오간다</li>
+          <li>완성 후에야 실제 동작을 확인한다</li>
+        </ul>
+      </div>
+      <div class="compare-card vibe reveal">
+        <span class="compare-label">바이브 코딩</span>
+        <h3>의도에서 시작</h3>
+        <ul class="compare-list">
+          <li>원하는 결과를 문장으로 설명한다</li>
+          <li>초안이 즉시 만들어져 바로 눈으로 본다</li>
+          <li>막히면 대화로 방향을 다시 준다</li>
+          <li>보면서 다듬고, 다듬으며 이해한다</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="principles">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="kicker">핵심 원칙</span>
+      <h2 class="section-title">바이브 코딩을 지탱하는 세 가지 태도</h2>
+      <p class="section-desc">순서가 있는 절차가 아니라, 동시에 작동하는 태도입니다.</p>
+    </div>
+
+    <div class="principle-flow">
+      <div class="principle-row reveal">
+        <div class="principle-word">몰입</div>
+        <div class="principle-body">
+          <h3>흐름을 끊지 않는다</h3>
+          <p>문서를 뒤지거나 문법을 검색하느라 생각의 흐름이 끊기지 않도록, 대화 자체가 곧 개발 환경이 됩니다.</p>
+        </div>
+      </div>
+      <div class="principle-row reveal">
+        <div class="principle-word">대화</div>
+        <div class="principle-body">
+          <h3>명령이 아니라 설명</h3>
+          <p>정확한 명령어보다, 원하는 결과와 맥락을 편하게 설명하는 편이 더 좋은 코드를 만듭니다.</p>
+        </div>
+      </div>
+      <div class="principle-row reveal">
+        <div class="principle-word">반복</div>
+        <div class="principle-body">
+          <h3>완벽보다 빠른 순환</h3>
+          <p>초안은 완성본이 아니라 대화의 출발점입니다. 보고, 고치고, 다시 설명하는 순환이 품질을 만듭니다.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="workflow">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="kicker">실제 흐름</span>
+      <h2 class="section-title">아이디어가 코드가 되기까지</h2>
+      <p class="section-desc">실제로 거치는 다섯 단계의 순서입니다.</p>
+    </div>
+
+    <div class="workflow reveal">
+      <div class="workflow-line"></div>
+      <div class="workflow-step">
+        <div class="workflow-num">01</div>
+        <div><h3>의도를 말한다</h3><p>무엇을, 왜 만들고 싶은지 자연어로 설명합니다. 기술 용어가 아니어도 괜찮습니다.</p></div>
+      </div>
+      <div class="workflow-step">
+        <div class="workflow-num">02</div>
+        <div><h3>초안이 만들어진다</h3><p>설명을 바탕으로 동작하는 코드 초안이 즉시 생성됩니다.</p></div>
+      </div>
+      <div class="workflow-step">
+        <div class="workflow-num">03</div>
+        <div><h3>결과를 직접 본다</h3><p>실행 화면이나 결과물을 눈으로 확인하며 의도와 얼마나 가까운지 판단합니다.</p></div>
+      </div>
+      <div class="workflow-step">
+        <div class="workflow-num">04</div>
+        <div><h3>다시 방향을 준다</h3><p>부족한 부분이나 바꾸고 싶은 부분을 다시 대화로 전달합니다.</p></div>
+      </div>
+      <div class="workflow-step">
+        <div class="workflow-num">05</div>
+        <div><h3>다듬어 완성한다</h3><p>몇 번의 순환을 거쳐 원하는 결과에 도달하면, 세부를 다듬어 마무리합니다.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="quote-panel reveal">
+      <blockquote>"코드를 치는 게 아니라, 만들고 싶은 것을 설명하는 것에 가깝습니다."</blockquote>
+      <div class="quote-attr">— 어느 바이브 코더의 회고</div>
+    </div>
+  </div>
+</section>
+
+<section id="cta" class="cta-final">
+  <div class="wrap">
+    <h2 class="reveal">지금, 생각의 속도로<br>만들어보세요</h2>
+    <p class="reveal">첫 문장을 쓰는 순간 바이브 코딩은 이미 시작됩니다.</p>
+    <a href="#" class="btn-primary reveal" onclick="return false;">무료로 시작하기</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; width:100%;">
+    <div class="logo" style="font-size:15px;"><span class="logo-dot"></span>바이브 코딩</div>
+    <div class="foot-links">
+      <a href="#what">개념</a>
+      <a href="#compare">비교</a>
+      <a href="#principles">원칙</a>
+      <a href="#workflow">흐름</a>
+    </div>
+    <div class="foot-copy">© 2026 Vibe Coding. 예시 페이지입니다.</div>
+  </div>
+</footer>
+
+<script>
+  // 스크롤 등장 애니메이션
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        entry.target.classList.add('visible');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  revealEls.forEach(el => io.observe(el));
+
+  // 히어로 터미널 타이핑 효과
+  const promptText = "로그인한 사용자의 최근 주문 5개를 카드로 보여줘";
+  const typedEl = document.getElementById('typedPrompt');
+  const codeOut = document.getElementById('codeOut');
+  let idx = 0;
+
+  function typeChar(){
+    if(idx <= promptText.length){
+      typedEl.textContent = promptText.slice(0, idx);
+      idx++;
+      setTimeout(typeChar, 55);
+    } else {
+      typedEl.style.borderRight = 'none';
+      setTimeout(() => codeOut.classList.add('show'), 300);
+    }
+  }
+  window.addEventListener('load', () => setTimeout(typeChar, 500));
+
+  // 네비게이션 부드러운 스크롤 (이미 CSS smooth-scroll 적용, 앵커 오프셋 보정)
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e){
+      const targetId = this.getAttribute('href');
+      if(targetId.length > 1){
+        const target = document.querySelector(targetId);
+        if(target){
+          e.preventDefault();
+          const offset = 80;
+          const top = target.getBoundingClientRect().top + window.pageYOffset - offset;
+          window.scrollTo({ top, behavior: 'smooth' });
+        }
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
